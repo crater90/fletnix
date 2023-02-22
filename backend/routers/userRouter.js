@@ -3,6 +3,7 @@ const router = express.Router();
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const User = require('../models/user');
+const checkAuth = require('../middleware/auth');
 
 
 router.post('/register', async (req, res) => {
@@ -39,7 +40,7 @@ router.post('/login', async (req, res) => {
             );
             return res.json({
                 message: 'success',
-                token: 'Bearer' + token
+                token: 'Bearer ' + token
             });
         } else {
             res.status(400).json({ message: 'Invalid email or password' })
@@ -48,3 +49,9 @@ router.post('/login', async (req, res) => {
         console.error(error);
     }
 })
+
+router.get('/checkAuth', checkAuth, (req, res) => {
+    return res.json({ isLoggedIn: true, email: req.user.email })
+})
+
+module.exports = router;

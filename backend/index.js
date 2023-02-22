@@ -2,10 +2,13 @@ require('dotenv').config()
 
 const express = require('express');
 const mongoose = require('mongoose');
+const cors = require('cors')
 const bodyParser = require('body-parser');
+const userRouter = require('./routers/userRouter');
 
 const app = express();
 
+app.use(cors());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
@@ -30,3 +33,5 @@ app.get('/', (req, res) => {
 app.listen(5000, () => {
     console.log('server listening on port', 5000);
 })
+
+app.use('/api', userRouter);
