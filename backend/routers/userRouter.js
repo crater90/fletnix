@@ -33,7 +33,7 @@ router.post('/login', async (req, res) => {
         const user = await User.findOne({ email: email });
         if (user && (bcrypt.compare(password, user.password))) {
             const token = jwt.sign(
-                payload,
+                { userId: user._id, email },
                 process.env.JWT_SECRET,
                 { expiresIn: 3600 }
             );
