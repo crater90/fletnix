@@ -1,4 +1,4 @@
-import mongoose, { mongo } from "mongoose";
+const mongoose = require('mongoose');
 
 const movieShowSchema = mongoose.Schema({
     show_id: {
@@ -39,5 +39,5 @@ const movieShowSchema = mongoose.Schema({
     }
 })
 
-module.exports = mongoose.model("Movie-show", movieShowSchema);
+module.exports = mongoose.model("Movies-show", movieShowSchema);
 

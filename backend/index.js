@@ -5,6 +5,7 @@ const mongoose = require('mongoose');
 const cors = require('cors')
 const bodyParser = require('body-parser');
 const userRouter = require('./routers/userRouter');
+const moviesShowsRouter = require('./routers/movieShowRouter');
 
 const app = express();
 
@@ -35,3 +36,4 @@ app.listen(5000, () => {
 })
 
 app.use('/api', userRouter);
+app.use('/api', moviesShowsRouter);
