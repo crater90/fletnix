@@ -2,10 +2,35 @@ import Head from 'next/head'
 import Image from 'next/image'
 import { Inter } from '@next/font/google'
 import Login from '@/components/Login'
+import { useState, useEffect } from 'react'
+import Header from '@/components/Header'
+import ListView from '@/components/ListView'
 
 const inter = Inter({ subsets: ['latin'] })
 
 export default function Home() {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    fetch('/api/checkAuth', {
+      headers: {
+        'x-access-token': localStorage.getItem("token")
+      }
+    })
+      .then(res => res.json())
+      .then(data => data.isLoggedIn ? setIsLoggedIn(true) : null);
+    // added this because on refresh login screen was flashed.
+    // .then(data => {
+    //   if (data.isLoggedIn) {
+    //     setLoading(false);
+    //     setIsLoggedIn(true);
+    //   }
+    //   else {
+    //     setLoading(false);
+    //   }
+    // })
+  }, [])
+
   return (
     <>
       <Head>
@@ -14,8 +39,15 @@ export default function Home() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main className={`${inter.className} `}>
-        <Login />
+      <main className={`${inter.className} min-h-screen bg-gradient-to-r from-rose-400 to-orange-300`}>
+        {
+          isLoggedIn ?
+            <>
+              <Header setIsLoggedIn={setIsLoggedIn} />
+              <ListView />
+            </> :
+            <Login setIsLoggedIn={setIsLoggedIn} />
+        }
 
       </main>
     </>

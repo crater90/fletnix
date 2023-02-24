@@ -1,0 +1,85 @@
+import React, { useState, useEffect } from 'react'
+import MovieCard from './MovieCard';
+import Pagination from './Pagination';
+
+
+
+function ListView() {
+
+    const [data, setData] = useState();
+    const [search, setSearch] = useState('');
+    const [searchInput, setSearchInput] = useState('');
+    const [filter, setFilter] = useState('All');
+    const [page, setPage] = useState(1);
+    const [paginationData, setPaginationData] = useState();
+    //const PROD_URL = process.env.PROD_URL;
+    const baseURL = '/api/all-movies-shows';
+
+    const handleSearch = (e) => {
+        e.preventDefault();
+        setSearch(searchInput);
+        console.log(searchInput);
+    }
+
+    useEffect(() => {
+        const getMoviesShows = async () => {
+            try {
+                const url = `${baseURL}?page=${page}&filter=${filter}&search=${search}`
+                const res = await fetch(url);
+                const resData = await res.json();
+                console.log(resData);
+                setData(resData.moviesShows);
+                setPaginationData(resData.paging);
+            } catch (error) {
+                console.log(error);
+            }
+        }
+        getMoviesShows();
+
+
+    }, [page, filter, search])
+
+
+
+    return (
+        <div className='py-10'>
+            <div className='max-w-4xl mx-auto bg-white rounded-md shadow-md'>
+                <div className='pt-5 mb-5 grid grid-cols-1 md:grid-cols-2'>
+                    <div className='flex justify-end mr-5'>
+                        <div className='flex-none border border-gray-200 rounded-md text-sm font-medium text-center'>
+                            <button onClick={(e) => setFilter('All')} class="inline-block p-2">All</button>
+                            <button onClick={(e) => setFilter('Movie')} class="inline-block p-2">Movie</button>
+                            <button onClick={(e) => setFilter('TV Show')} class="inline-block p-2 active:bg-gray-400">Show</button>
+                        </div>
+                    </div>
+                    <form onSubmit={handleSearch} className='mr-5 flex items-center space-x-2 rounded-md border border-gray-200 bg-gray-100'>
+                        <input value={searchInput} onChange={(e) => setSearchInput(e.target.value)} className='w-full block p-2 bg-gray-100 outline-none text-sm' type='text' placeholder='Search Title, Caste, etc' />
+                        <button type='submit'>
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 text-gray-600 mr-2">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
+                            </svg>
+                        </button>
+                    </form>
+                </div>
+
+                {data?.map((movie, idx) => {
+                    return (
+                        <>
+                            <div className='pb-5' key={idx}>
+                                <MovieCard data={movie} />
+                            </div>
+                        </>
+                    )
+                })}
+
+                <Pagination
+                    currentPage={page}
+                    totalPages={paginationData?.totalPages}
+                    onPageChange={page => setPage(page)}
+                />
+            </div>
+        </div>
+    )
+}
+
+export default ListView
