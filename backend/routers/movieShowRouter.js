@@ -8,9 +8,11 @@ router.get('/all-movies-shows', async (req, res) => {
   const limit = 15;
   const filter = req.query.filter;
   const search = req.query.search || '';
+  const age = req.query.age < 18 ? true : false;
 
   let query = {};
-  if (filter) {
+
+  if (filter === 'Movie' || filter === 'TV Show') {
     query = {
       '$and': [
         {
@@ -19,19 +21,22 @@ router.get('/all-movies-shows', async (req, res) => {
             { 'cast': { $regex: search, $options: 'i' } },
           ],
         },
-        { 'type': filter }
+        { 'type': filter },
+        age ? ({ 'rating': { '$ne': 'R' } }) : ({})
       ]
     }
-  }
-  query = {
-    '$and': [
-      {
-        '$or': [
-          { 'title': { $regex: search, $options: 'i' } },
-          { 'cast': { $regex: search, $options: 'i' } },
-        ],
-      },
-    ]
+  } else {
+    query = {
+      '$and': [
+        {
+          '$or': [
+            { 'title': { $regex: search, $options: 'i' } },
+            { 'cast': { $regex: search, $options: 'i' } },
+          ],
+        },
+        age ? ({ 'rating': { '$ne': 'R' } }) : ({})
+      ]
+    }
   }
 
   try {
@@ -54,4 +59,20 @@ router.get('/all-movies-shows', async (req, res) => {
   }
 })
 
+router.get('/get-a-movie-show', async (req, res) => {
+  const id = req.query.id;
+  try {
+    const doc = await movieShows.find({ 'show_id': id })
+    res.status(200).send({
+      data: doc
+    })
+
+  } catch (error) {
+    console.log("Error", error);
+    res.status(500).send({
+      data: null,
+    })
+  }
+
+})
 module.exports = router;

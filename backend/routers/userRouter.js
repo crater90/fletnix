@@ -40,6 +40,8 @@ router.post('/login', async (req, res) => {
             );
             return res.json({
                 message: 'success',
+                userEmail: user.email,
+                userAge: user.age,
                 token: 'Bearer ' + token
             });
         } else {
