@@ -24,6 +24,7 @@ function ListView() {
     const getMoviesShows = async () => {
       try {
         setLoading(true);
+        setData(null);
         const url = `${baseURL}?page=${page}&filter=${filter}&search=${search}&age=${userAge}`
         const res = await fetch(url);
         const resData = await res.json();

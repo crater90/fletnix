@@ -2,6 +2,7 @@
 import Image from 'next/image'
 import React, { useState, useContext } from 'react'
 import { UserContext } from '@/contexts/userContext';
+import { toast } from 'react-hot-toast';
 
 function Login() {
 
@@ -23,14 +24,19 @@ function Login() {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (registerScreen) {
+      const notification = toast.loading('Registering user...')
       fetch('https://fletnix-api.onrender.com/api/register', {
         method: 'POST',
         headers: {
           "Content-type": "application/json"
         },
         body: JSON.stringify(userDetails)
-      })
+      }).then((res) => {
+        toast.success('User created successfully..')
+      }).catch(err => toast.error('Something went wrong...'))
+        .finally(() => toast.dismiss(notification))
     } else {
+      const notification = toast.loading('Logging in...')
       fetch('https://fletnix-api.onrender.com/api/login', {
         method: 'POST',
         headers: {
@@ -44,7 +50,10 @@ function Login() {
           setUserEmail(data.userEmail);
           setUserAge(data.userAge);
           setIsLoggedIn(true);
-        });
+          toast.success('User logged in');
+        })
+        .catch((err) => toast.error('Unable to Log in...'))
+        .finally(() => toast.dismiss(notification))
 
     }
     setUserDetails({
